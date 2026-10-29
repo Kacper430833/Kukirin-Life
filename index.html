@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kukirin Life Demo</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: rgba(15, 23, 42, 0.85);
+      --panel-2: rgba(30, 41, 59, 0.9);
+      --line: rgba(148, 163, 184, 0.28);
+      --text: #e2e8f0;
+      --muted: #a5b4cf;
+      --green: #4ade80;
+      --yellow: #facc15;
+      --red: #f87171;
+      --cyan: #38bdf8;
+      --purple: #a78bfa;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #020817, #0f172a);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      display: flex;
+      gap: 14px;
+      padding: 14px;
+    }
+
+    .sidebar {
+      width: 350px;
+      min-width: 350px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .brand {
+      font-weight: 900;
+      font-size: 30px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--yellow);
+      text-shadow: 0 0 12px rgba(250, 204, 21, 0.3);
+      margin-bottom: 4px;
+      text-align: center;
+    }
+
+    .status-box {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .panel-title {
+      font-weight: 700;
+      color: var(--cyan);
+      margin: 0 0 8px;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .shop, .garage {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .vehicle-item {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 8px 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .vehicle-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .vehicle-meta {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .vehicle-price {
+      color: var(--yellow);
+      font-weight: 700;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    button {
+      background: linear-gradient(180deg, #38bdf8, #2563eb);
+      border: none;
+      color: white;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 12px;
+      transition: transform 0.12s ease, filter 0.12s ease;
+      min-width: 72px;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+    }
+
+    button.secondary {
+      background: linear-gradient(180deg, #4ade80, #16a34a);
+    }
+
+    button.warn {
+      background: linear-gradient(180deg, #f59e0b, #d97706);
+    }
+
+    .game-shell {
+      flex: 1;
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      background: #020817;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #0b1220;
+    }
+
+    .hint {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      background: rgba(2, 6, 23, 0.7);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: var(--text);
+      backdrop-filter: blur(6px);
+    }
+
+    .message {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(17, 24, 39, 0.75);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.18);
+    }
+
+    @media (max-width: 1000px) {
+      body {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        min-width: unset;
+        height: auto;
+      }
+
+      .game-shell {
+        min-height: 60vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="brand">Kukirin Life</div>
+
+    <div class="status-box" id="hud">
+      <div><strong>Budżet:</strong> <span id="money">500 zł</span></div>
+      <div><strong>Hulajnoga:</strong> <span id="currentVehicle">Kukirin S1 Pro</span></div>
+      <div><strong>Tryb:</strong> <span id="mode">Pieszo</span></div>
+      <div><strong>Prędkość:</strong> <span id="speed">0 km/h</span></div>
+      <div><strong>Status:</strong> <span id="status">Miasto gotowe</span></div>
+    </div>
+
+    <div>
+      <div class="panel-title">Sklep</div>
+      <div class="shop" id="shop"></div>
+    </div>
+
+    <div>
+      <div class="panel-title">Garaż</div>
+      <div class="garage" id="garage"></div>
+    </div>
+  </div>
+
+  <div class="game-shell">
+    <canvas id="game"></canvas>
+    <div id="messageBox" class="message">Demo testowa — Kraków</div>
+    <div class="hint">
+      W/A/S/D • Shift • E • Kliknij w sklepie i garażu
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("game");
+    const context = canvas.getContext("2d");
+
+    const moneyEl = document.getElementById("money");
+    const currentVehicleEl = document.getElementById("currentVehicle");
+    const modeEl = document.getElementById("mode");
+    const speedEl = document.getElementById("speed");
+    const statusEl = document.getElementById("status");
+    const messageBox = document.getElementById("messageBox");
+    const shopEl = document.getElementById("shop");
+    const garageEl = document.getElementById("garage");
+
+    const WORLD = { w: 1800, h: 1100 };
+
+    const keys = {};
+    const signs = [
+      { x: 340, y: 330, text: "30", color: "#facc15" },
+      { x: 600, y: 260, text: "STOP", color: "#f87171" },
+      { x: 1120, y: 480, text: "Kraków", color: "#7dd3fc" },
+      { x: 1380, y: 850, text: "Rondo", color: "#86efac" },
+      { x: 960, y: 760, text: "20", color: "#fbbf24" }
+    ];
+
+    const roads = [
+      { x: 0, y: 260, w: 1800, h: 120 },       // duża pozioma
+      { x: 0, y: 580, w: 1800, h: 120 },       // duża pozioma 2
+      { x: 320, y: 0, w: 120, h: 1100 },       // pionowa 1
+      { x: 780, y: 0, w: 120, h: 1100 },       // pionowa 2
+      { x: 1260, y: 0, w: 120, h: 1100 },      // pionowa 3
+      { x: 1550, y: 220, w: 160, h: 700 },     // boczna
+      { x: 110, y: 920, w: 500, h: 120 },      // mała
+      { x: 930, y: 830, w: 560, h: 120 }       // mała
+    ];
+
+    const buildings = [
+      { x: 80, y: 70, w: 180, h: 120 },
+      { x: 80, y: 420, w: 180, h: 100 },
+      { x: 100, y: 720, w: 170, h: 120 },
+      { x: 510, y: 80, w: 180, h: 120 },
+      { x: 510, y: 390, w: 180, h: 120 },
+      { x: 510, y: 700, w: 180, h: 180 },
+      { x: 900, y: 80, w: 200, h: 120 },
+      { x: 900, y: 420, w: 200, h: 120 },
+      { x: 900, y: 700, w: 200, h: 140 },
+      { x: 1330, y: 70, w: 230, h: 120 },
+      { x: 1330, y: 420, w: 220, h: 120 },
+      { x: 1330, y: 720, w: 230, h: 120 }
+    ];
+
+    const allVehicles = {
+      free: { id: "free", name: "Kukirin S1 Pro", price: 0, topSpeed: 30, accel: 1.0, color: "#7dd3fc", wheelColor: "#111827" },
+      s1max: { id: "s1max", name: "Kukirin S1 Max", price: 1200, topSpeed: 35, accel: 1.1, color: "#8b5cf6", wheelColor: "#0f172a" },
+      s3pro: { id: "s3pro", name: "Kukirin S3 Pro", price: 2200, topSpeed: 38, accel: 1.22, color: "#f97316", wheelColor: "#111827" },
+      g2: { id: "g2", name: "Kukirin G2", price: 2800, topSpeed: 42, accel: 1.28, color: "#22c55e", wheelColor: "#111827" },
+      g2master: { id: "g2master", name: "Kukirin G2 Master", price: 3400, topSpeed: 46, accel: 1.33, color: "#a78bfa", wheelColor: "#111827" },
+      g2pro: { id: "g2pro", name: "Kukirin G2 Pro", price: 4200, topSpeed: 48, accel: 1.38, color: "#60a5fa", wheelColor: "#111827" },
+      g2max: { id: "g2max", name: "Kukirin G2 Max", price: 5100, topSpeed: 50, accel: 1.42, color: "#f472b6", wheelColor: "#111827" },
+      g3: { id: "g3", name: "Kukirin G3", price: 6200, topSpeed: 55, accel: 1.48, color: "#2dd4bf", wheelColor: "#111827" },
+      g3pro: { id: "g3pro", name: "Kukirin G3 Pro", price: 7800, topSpeed: 60, accel: 1.58, color: "#facc15", wheelColor: "#111827" },
+      g4: { id: "g4", name: "Kukirin G4", price: 9800, topSpeed: 64, accel: 1.68, color: "#e879f9", wheelColor: "#111827" },
+      g4ultra: { id: "g4ultra", name: "Kukirin G4 Ultra", price: 12500, topSpeed: 68, accel: 1.8, color: "#34d399", wheelColor: "#111827" },
+      g4max: { id: "g4max", name: "Kukirin G4 Max", price: 14500, topSpeed: 72, accel: 1.9, color: "#10b981", wheelColor: "#111827" },
+      t3: { id: "t3", name: "Kukirin T3", price: 17000, topSpeed: 76, accel: 2.05, color: "#38bdf8", wheelColor: "#111827" },
+      t4: { id: "t4", name: "Kukirin T4", price: 21500, topSpeed: 80, accel: 2.15, color: "#f59e0b", wheelColor: "#111827" },
+      m4pro: { id: "m4pro", name: "Kukirin M4 Pro", price: 28000, topSpeed: 85, accel: 2.3, color: "#a78bfa", wheelColor: "#111827" },
+      m4max: { id: "m4max", name: "Kukirin M4 Max", price: 33000, topSpeed: 90, accel: 2.45, color: "#f87171", wheelColor: "#111827" }
+    };
+
+    const state = {
+      money: 500,
+      owned: ["free"],
+      currentVehicleId: "free",
+      lastMessage: "Miasto gotowe",
+      player: {
+        x: 180,
+        y: 690,
+        radius: 16,
+        vx: 0,
+        vy: 0,
+        angle: 0,
+        mode: "walk", // walk / scooter
+        speed: 0,
+        boost: false
+      },
+      police: [
+        { x: 600, y: 100, angle: 0, speed: 120, chasing: false, patrolX: 620, patrolY: 100, tint: "#f8fafc" },
+        { x: 1420, y: 980, angle: 0, speed: 110, chasing: false, patrolX: 1420, patrolY: 980, tint: "#e2e8f0" }
+      ],
+      arrested: false,
+      arrestTimer: 0
+    };
+
+    function setMessage(text) {
+      state.lastMessage = text;
+      messageBox.textContent = text;
+    }
+
+    function getCurrentVehicle() {
+      return allVehicles[state.currentVehicleId];
+    }
+
+    function updateHud() {
+      moneyEl.textContent = state.money + " zł";
+      currentVehicleEl.textContent = allVehicles[state.currentVehicleId].name;
+      modeEl.textContent = state.player.mode === "walk" ? "Pieszo" : "Hulajnoga";
+      speedEl.textContent = Math.round(state.player.speed) + " km/h";
+      statusEl.textContent = state.lastMessage;
+    }
+
+    function renderShop() {
+      shopEl.innerHTML = "";
+      Object.values(allVehicles).forEach(vehicle => {
+        const item = document.createElement("div");
+        item.className = "vehicle-item";
+
+        const left = document.createElement("div");
+        left.innerHTML = `
+          <div class="vehicle-name">${vehicle.name}</div>
+          <div class="vehicle-meta">${vehicle.topSpeed} km/h • ${vehicle.accel.toFixed(2)}x</div>
+        `;
+
+        const right = document.createElement("div");
+        right.style.display = "flex";
+        right.style.flexDirection = "column";
+        right.style.alignItems = "flex-end";
+        right.style.gap = "4px";
+
+        const price = document.createElement("div");
+        price.className = "vehicle-price";
+        price.textContent = vehicle.price === 0 ? "DARMO" : vehicle.price + " zł";
+
+        const btn = document.createElement("button");
+        btn.textContent = state.owned.includes(vehicle.id) ? "UŻYJ" : "KUP";
+        btn.className = state.owned.includes(vehicle.id) ? "secondary" : "";
+
+        btn.onclick = () => {
+          if (state.owned.includes(vehicle.id)) {
+            state.currentVehicleId = vehicle.id;
+            state.player.mode = "scooter";
+            setMessage("Wybrano: " + vehicle.name);
+          } else {
+            if (state.money >= vehicle.price) {
+              state.money -= vehicle.price;
+              state.owned.push(vehicle.id);
+              state.currentVehicleId = vehicle.id;
+              state.player.mode = "scooter";
+              setMessage("Kupiono: " + vehicle.name);
+            } else {
+              setMessage("Za mało pieniędzy!");
+            }
+          }
+          renderShop();
+          renderGarage();
+          updateHud();
+        };
+
+        right.append(price, btn);
+        item.append(left, right);
+        shopEl.appendChild(item);
+      });
+    }
+
+    function renderGarage() {
+      garageEl.innerHTML = "";
+      state.owned.forEach(vehicleId => {
+        const vehicle = allVehicles[vehicleId];
+        const item = document.createElement("div");
+        item.className = "vehicle-item";
+
+        const left = document.createElement("div");
+        left.innerHTML = `
+          <div class="vehicle-name">${vehicle.name}</div>
+          <div class="vehicle-meta">${vehicle.topSpeed} km/h</div>
+        `;
+
+        const right = document.createElement("div");
+        const btn = document.createElement("button");
+        btn.className = "secondary";
+
+        if (vehicleId === state.currentVehicleId && state.player.mode === "scooter") {
+          btn.textContent = "AKTYWNA";
+          btn.disabled = true;
+          btn.style.opacity = "0.8";
+        } else {
+          btn.textContent = "UŻYJ";
+        }
+
+        btn.onclick = () => {
+          state.currentVehicleId = vehicleId;
+          state.player.mode = "scooter";
+          setMessage("Aktywowano: " + vehicle.name);
+          renderShop();
+          renderGarage();
+          updateHud();
+        };
+
+        right.appendChild(btn);
+        item.append(left, right);
+        garageEl.appendChild(item);
+      });
+    }
+
+    function toggleMode() {
+      if (state.player.mode === "walk") {
+        if (state.currentVehicleId === "free" || state.owned.includes(state.currentVehicleId)) {
+          state.player.mode = "scooter";
+          setMessage("Wsiadłeś na " + allVehicles[state.currentVehicleId].name);
+        } else {
+          setMessage("Brak hulajnogi!");
+        }
+      } else {
+        state.player.mode = "walk";
+        setMessage("Wysiadłeś z hulajnogi");
+      }
+      updateHud();
+      renderGarage();
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function isPointInRoad(x, y) {
+      for (const road of roads) {
+        if (x > road.x && x < road.x + road.w && y > road.y && y < road.y + road.h) return true;
+      }
+      return false;
+    }
+
+    function handleInput(dt) {
+      const player = state.player;
+
+      let dx = 0;
+      let dy = 0;
+
+      if (keys["KeyW"] || keys["ArrowUp"]) dy -= 1;
+      if (keys["KeyS"] || keys["ArrowDown"]) dy += 1;
+      if (keys["KeyA"] || keys["ArrowLeft"]) dx -= 1;
+      if (keys["KeyD"] || keys["ArrowRight"]) dx += 1;
+
+      const inputLen = Math.hypot(dx, dy) || 1;
+      dx /= inputLen;
+      dy /= inputLen;
+
+      let moveSpeed = player.mode === "walk" ? 150 : allVehicles[state.currentVehicleId].topSpeed * 5.2;
+      const boostFactor = (keys["ShiftLeft"] || keys["ShiftRight"]) && player.mode === "scooter" ? 1.2 : 1;
+
+      const currentVehicle = allVehicles[state.currentVehicleId];
+      const maxSpeed = currentVehicle.topSpeed * 5.2 * boostFactor;
+
+      if (dx !== 0 || dy !== 0) {
+        player.angle = Math.atan2(dy, dx);
+        const nextX = player.x + dx * maxSpeed * dt;
+        const nextY = player.y + dy * maxSpeed * dt;
+
+        // granice mapy
+        player.x = clamp(nextX, 18, WORLD.w - 18);
+        player.y = clamp(nextY, 18, WORLD.h - 18);
+
+        player.speed = Math.min(maxSpeed, Math.hypot(dx * maxSpeed, dy * maxSpeed));
+      } else {
+        player.speed *= 0.86;
+        if (Math.abs(player.speed) < 1) player.speed = 0;
+      }
+    }
+
+    function updatePolice(dt) {
+      const player = state.player;
+      for (const cop of state.police) {
+        const dist = Math.hypot(player.x - cop.x, player.y - cop.y);
+
+        const playerFastEnough = player.speed > 18 && player.mode === "scooter";
+        if (playerFastEnough && dist < 300) {
+          cop.chasing = true;
+          setMessage("Policja: Zatrzymaj się!");
+        } else if (dist > 420) {
+          cop.chasing = false;
+        }
+
+        if (cop.chasing) {
+          const dx = player.x - cop.x;
+          const dy = player.y - cop.y;
+          const ang = Math.atan2(dy, dx);
+          const step = cop.speed * dt;
+
+          cop.x += Math.cos(ang) * step;
+          cop.y += Math.sin(ang) * step;
+
+          if (dist < 28) {
+            state.arrested = true;
+            state.arrestTimer = 2.5;
+            state.money = Math.max(0, state.money - 150);
+            state.player.x = 180;
+            state.player.y = 690;
+            state.player.mode = "walk";
+            state.player.speed = 0;
+            setMessage("Aresztowanie! Strata 150 zł.");
+          }
+        } else {
+          // patrolowanie
+          const patrolDx = Math.cos(cop.angle) * 90;
+          const patrolDy = Math.sin(cop.angle) * 90;
+
+          if (Math.abs(cop.x - cop.patrolX) > 120 || Math.abs(cop.y - cop.patrolY) > 120) {
+            cop.angle = Math.atan2(cop.patrolY - cop.y, cop.patrolX - cop.x);
+          }
+
+          const px = Math.cos(cop.angle) * cop.speed * dt;
+          const py = Math.sin(cop.angle) * cop.speed * dt;
+
+          cop.x += px;
+          cop.y += py;
+
+          // odwracanie po granicach
+          if (cop.x < 100 || cop.x > WORLD.w - 100 || cop.y < 100 || cop.y > WORLD.h - 100) {
+            cop.angle += Math.PI * 0.8;
+          }
+        }
+      }
+
+      if (state.arrested) {
+        state.arrestTimer -= dt;
+        if (state.arrestTimer <= 0) {
+          state.arrested = false;
+          setMessage("Możesz wrócić do jazdy.");
+        }
+      }
+    }
+
+    function drawRoads() {
+      context.fillStyle = "#1e293b";
+      roads.forEach(road => {
+        context.fillRect(road.x, road.y, road.w, road.h);
+      });
+
+      // linie na drogach
+      context.strokeStyle = "rgba(250, 250, 250, 0.18)";
+      context.lineWidth = 2;
+      roads.forEach(road => {
+        if (road.w > road.h) {
+          const y = road.y + road.h / 2;
+          context.beginPath();
+          context.moveTo(road.x, y);
+          context.lineTo(road.x + road.w, y);
+          context.setLineDash([16, 18]);
+          context.stroke();
+        } else {
+          const x = road.x + road.w / 2;
+          context.beginPath();
+          context.moveTo(x, road.y);
+          context.lineTo(x, road.y + road.h);
+          context.setLineDash([16, 18]);
+          context.stroke();
+        }
+      });
+      context.setLineDash([]);
+    }
+
+    function drawBuildings() {
+      buildings.forEach(b => {
+        context.fillStyle = "#334155";
+        context.fillRect(b.x, b.y, b.w, b.h);
+
+        context.fillStyle = "rgba(148,163,184,0.14)";
+        for (let x = b.x + 12; x < b.x + b.w - 8; x += 22) {
+          for (let y = b.y + 12; y < b.y + b.h - 8; y += 22) {
+            context.fillRect(x, y, 10, 10);
+          }
+        }
+      });
+    }
+
+    function drawSigns() {
+      signs.forEach(sign => {
+        context.fillStyle = sign.color;
+        context.font = "bold 20px Arial";
+        context.fillText(sign.text, sign.x, sign.y);
+      });
+    }
+
+    function drawPlayer() {
+      const p = state.player;
+      if (p.mode === "walk") {
+        context.fillStyle = "#f8fafc";
+        context.beginPath();
+        context.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        context.fill();
+
+        context.strokeStyle = "#38bdf8";
+        context.lineWidth = 2;
+        context.beginPath();
+        context.moveTo(p.x, p.y);
+        context.lineTo(p.x + Math.cos(p.angle) * 22, p.y + Math.sin(p.angle) * 22);
+        context.stroke();
+      } else {
+        const v = allVehicles[state.currentVehicleId];
+        const bodyLength = 38;
+        const bodyWidth = 18;
+
+        context.save();
+        context.translate(p.x, p.y);
+        context.rotate(p.angle);
+
+        // kierownica / rama
+        context.fillStyle = v.color;
+        context.fillRect(-bodyLength / 2, -bodyWidth / 2, bodyLength, bodyWidth);
+
+        // kierownica
+        context.fillStyle = "#e5e7eb";
+        context.fillRect(-bodyLength / 2 + 8, -bodyWidth / 2 - 8, 12, 6);
+
+        // koła
+        context.fillStyle = v.wheelColor;
+        context.fillRect(-bodyLength / 2 + 4, -bodyWidth / 2 - 10, 12, 8);
+        context.fillRect(bodyLength / 2 - 16, -bodyWidth / 2 - 10, 12, 8);
+        context.fillRect(-bodyLength / 2 + 4, bodyWidth / 2 + 2, 12, 8);
+        context.fillRect(bodyLength / 2 - 16, bodyWidth / 2 + 2, 12, 8);
+
+        context.restore();
+      }
+    }
+
+    function drawPolice() {
+      for (const cop of state.police) {
+        context.save();
+        context.translate(cop.x, cop.y);
+        context.rotate(Math.atan2(state.player.y - cop.y, state.player.x - cop.x));
+
+        context.fillStyle = "#f8fafc";
+        context.fillRect(-12, -10, 24, 20);
+
+        context.fillStyle = "#1f2937";
+        context.fillRect(-6, -8, 12, 12);
+
+        context.fillStyle = "#ef4444";
+        context.fillRect(-8, 12, 16, 5);
+
+        context.restore();
+
+        // glow / tło
+        context.fillStyle = cop.chasing ? "rgba(248, 113, 113, 0.25)" : "rgba(56, 189, 248, 0.10)";
+        context.beginPath();
+        context.arc(cop.x, cop.y, cop.chasing ? 70 : 40, 0, Math.PI * 2);
+        context.fill();
+      }
+    }
+
+    function drawMinimapHints() {
+      context.fillStyle = "#f8fafc";
+      context.font = "12px Arial";
+      context.fillText("Kraków — Centrum", 40, 40);
+      context.fillText("ul. Jana Pawła II", 1200, 180);
+      context.fillText("Rondo Grzegórzeckie", 1300, 930);
+    }
+
+    function drawScene() {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+
+      // tło mapy
+      context.fillStyle = "#0f172a";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
+      drawBuildings();
+      drawRoads();
+      drawSigns();
+      drawPolice();
+      drawPlayer();
+      drawMinimapHints();
+    }
+
+    function resizeCanvas() {
+      const parent = canvas.parentElement;
+      const rect = parent.getBoundingClientRect();
+      canvas.width = Math.max(1100, rect.width);
+      canvas.height = Math.max(700, rect.height);
+    }
+
+    function animate() {
+      const now = performance.now();
+      const dt = 1 / 60; // prosty game loop, stabilny
+      handleInput(dt);
+      updatePolice(dt);
+      drawScene();
+      updateHud();
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener("keydown", (e) => {
+      keys[e.code] = true;
+
+      if (e.code === "KeyE") {
+        toggleMode();
+      }
+    });
+
+    window.addEventListener("keyup", (e) => {
+      keys[e.code] = false;
+    });
+
+    window.addEventListener("resize", resizeCanvas);
+
+    // start
+    resizeCanvas();
+    renderShop();
+    renderGarage();
+    updateHud();
+    setMessage("Demo testowa — Kraków");
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
