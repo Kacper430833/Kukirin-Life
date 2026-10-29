@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kukirin Life Demo</title>
+  <title>Kukirin Life 3D Demo</title>
   <style>
     :root {
       --bg: #0f172a;
-      --panel: rgba(15, 23, 42, 0.85);
+      --panel: rgba(15, 23, 42, 0.88);
       --panel-2: rgba(30, 41, 59, 0.9);
-      --line: rgba(148, 163, 184, 0.28);
+      --line: rgba(148, 163, 184, 0.25);
       --text: #e2e8f0;
       --muted: #a5b4cf;
       --green: #4ade80;
@@ -19,16 +19,14 @@
       --purple: #a78bfa;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html, body {
       margin: 0;
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: linear-gradient(135deg, #020817, #0f172a);
+      background: radial-gradient(circle at top, #0f172a, #020817 52%);
       color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
     }
@@ -40,12 +38,12 @@
     }
 
     .sidebar {
-      width: 350px;
-      min-width: 350px;
+      width: 360px;
+      min-width: 360px;
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
       padding: 12px;
       display: flex;
       flex-direction: column;
@@ -53,14 +51,13 @@
     }
 
     .brand {
+      text-align: center;
       font-weight: 900;
       font-size: 30px;
       letter-spacing: 1px;
       text-transform: uppercase;
       color: var(--yellow);
-      text-shadow: 0 0 12px rgba(250, 204, 21, 0.3);
-      margin-bottom: 4px;
-      text-align: center;
+      text-shadow: 0 0 14px rgba(250, 204, 21, 0.25);
     }
 
     .status-box {
@@ -68,17 +65,17 @@
       border: 1px solid var(--line);
       border-radius: 12px;
       padding: 10px 12px;
-      line-height: 1.5;
+      line-height: 1.6;
       font-size: 14px;
     }
 
     .panel-title {
-      font-weight: 700;
+      font-size: 15px;
+      font-weight: 800;
       color: var(--cyan);
-      margin: 0 0 8px;
-      font-size: 16px;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.7px;
       text-transform: uppercase;
+      margin: 0 0 8px;
     }
 
     .shop, .garage {
@@ -100,13 +97,13 @@
       padding: 8px 10px;
       display: flex;
       justify-content: space-between;
-      gap: 8px;
       align-items: center;
+      gap: 8px;
     }
 
     .vehicle-name {
-      font-size: 13px;
       font-weight: 700;
+      font-size: 13px;
       color: var(--text);
     }
 
@@ -132,8 +129,8 @@
       cursor: pointer;
       font-weight: 700;
       font-size: 12px;
-      transition: transform 0.12s ease, filter 0.12s ease;
       min-width: 72px;
+      transition: transform 0.12s ease, filter 0.12s ease;
     }
 
     button:hover {
@@ -145,32 +142,32 @@
       background: linear-gradient(180deg, #4ade80, #16a34a);
     }
 
-    button.warn {
-      background: linear-gradient(180deg, #f59e0b, #d97706);
+    button:disabled {
+      opacity: 0.8;
+      cursor: default;
     }
 
-    .game-shell {
-      flex: 1;
+    .viewport {
       position: relative;
+      flex: 1;
       border-radius: 18px;
       overflow: hidden;
       border: 1px solid var(--line);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-      background: #020817;
+      background: #000;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.35);
     }
 
     canvas {
       display: block;
       width: 100%;
       height: 100%;
-      background: #0b1220;
     }
 
     .hint {
       position: absolute;
-      bottom: 12px;
       left: 12px;
-      background: rgba(2, 6, 23, 0.7);
+      bottom: 12px;
+      background: rgba(2, 6, 23, 0.72);
       border: 1px solid var(--line);
       border-radius: 10px;
       padding: 8px 10px;
@@ -181,32 +178,28 @@
 
     .message {
       position: absolute;
-      top: 12px;
       left: 50%;
+      top: 14px;
       transform: translateX(-50%);
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: rgba(17, 24, 39, 0.75);
+      background: rgba(2, 6, 23, 0.75);
       border: 1px solid var(--line);
-      color: var(--text);
-      font-size: 12px;
+      border-radius: 999px;
+      padding: 8px 16px;
       font-weight: 700;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.5px;
+      font-size: 12px;
       box-shadow: 0 0 16px rgba(56, 189, 248, 0.18);
     }
 
-    @media (max-width: 1000px) {
+    @media (max-width: 1080px) {
       body {
         flex-direction: column;
       }
-
       .sidebar {
         width: 100%;
         min-width: unset;
-        height: auto;
       }
-
-      .game-shell {
+      .viewport {
         min-height: 60vh;
       }
     }
@@ -235,81 +228,40 @@
     </div>
   </div>
 
-  <div class="game-shell">
-    <canvas id="game"></canvas>
+  <div class="viewport">
     <div id="messageBox" class="message">Demo testowa — Kraków</div>
-    <div class="hint">
-      W/A/S/D • Shift • E • Kliknij w sklepie i garażu
-    </div>
+    <div class="hint">W/A/S/D • Shift • E</div>
   </div>
 
-  <script>
-    const canvas = document.getElementById("game");
-    const context = canvas.getContext("2d");
+  <script type="module">
+    import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 
     const moneyEl = document.getElementById("money");
     const currentVehicleEl = document.getElementById("currentVehicle");
     const modeEl = document.getElementById("mode");
     const speedEl = document.getElementById("speed");
     const statusEl = document.getElementById("status");
-    const messageBox = document.getElementById("messageBox");
+    const msgEl = document.getElementById("messageBox");
     const shopEl = document.getElementById("shop");
     const garageEl = document.getElementById("garage");
 
-    const WORLD = { w: 1800, h: 1100 };
-
-    const keys = {};
-    const signs = [
-      { x: 340, y: 330, text: "30", color: "#facc15" },
-      { x: 600, y: 260, text: "STOP", color: "#f87171" },
-      { x: 1120, y: 480, text: "Kraków", color: "#7dd3fc" },
-      { x: 1380, y: 850, text: "Rondo", color: "#86efac" },
-      { x: 960, y: 760, text: "20", color: "#fbbf24" }
-    ];
-
-    const roads = [
-      { x: 0, y: 260, w: 1800, h: 120 },       // duża pozioma
-      { x: 0, y: 580, w: 1800, h: 120 },       // duża pozioma 2
-      { x: 320, y: 0, w: 120, h: 1100 },       // pionowa 1
-      { x: 780, y: 0, w: 120, h: 1100 },       // pionowa 2
-      { x: 1260, y: 0, w: 120, h: 1100 },      // pionowa 3
-      { x: 1550, y: 220, w: 160, h: 700 },     // boczna
-      { x: 110, y: 920, w: 500, h: 120 },      // mała
-      { x: 930, y: 830, w: 560, h: 120 }       // mała
-    ];
-
-    const buildings = [
-      { x: 80, y: 70, w: 180, h: 120 },
-      { x: 80, y: 420, w: 180, h: 100 },
-      { x: 100, y: 720, w: 170, h: 120 },
-      { x: 510, y: 80, w: 180, h: 120 },
-      { x: 510, y: 390, w: 180, h: 120 },
-      { x: 510, y: 700, w: 180, h: 180 },
-      { x: 900, y: 80, w: 200, h: 120 },
-      { x: 900, y: 420, w: 200, h: 120 },
-      { x: 900, y: 700, w: 200, h: 140 },
-      { x: 1330, y: 70, w: 230, h: 120 },
-      { x: 1330, y: 420, w: 220, h: 120 },
-      { x: 1330, y: 720, w: 230, h: 120 }
-    ];
-
-    const allVehicles = {
-      free: { id: "free", name: "Kukirin S1 Pro", price: 0, topSpeed: 30, accel: 1.0, color: "#7dd3fc", wheelColor: "#111827" },
-      s1max: { id: "s1max", name: "Kukirin S1 Max", price: 1200, topSpeed: 35, accel: 1.1, color: "#8b5cf6", wheelColor: "#0f172a" },
-      s3pro: { id: "s3pro", name: "Kukirin S3 Pro", price: 2200, topSpeed: 38, accel: 1.22, color: "#f97316", wheelColor: "#111827" },
-      g2: { id: "g2", name: "Kukirin G2", price: 2800, topSpeed: 42, accel: 1.28, color: "#22c55e", wheelColor: "#111827" },
-      g2master: { id: "g2master", name: "Kukirin G2 Master", price: 3400, topSpeed: 46, accel: 1.33, color: "#a78bfa", wheelColor: "#111827" },
-      g2pro: { id: "g2pro", name: "Kukirin G2 Pro", price: 4200, topSpeed: 48, accel: 1.38, color: "#60a5fa", wheelColor: "#111827" },
-      g2max: { id: "g2max", name: "Kukirin G2 Max", price: 5100, topSpeed: 50, accel: 1.42, color: "#f472b6", wheelColor: "#111827" },
-      g3: { id: "g3", name: "Kukirin G3", price: 6200, topSpeed: 55, accel: 1.48, color: "#2dd4bf", wheelColor: "#111827" },
-      g3pro: { id: "g3pro", name: "Kukirin G3 Pro", price: 7800, topSpeed: 60, accel: 1.58, color: "#facc15", wheelColor: "#111827" },
-      g4: { id: "g4", name: "Kukirin G4", price: 9800, topSpeed: 64, accel: 1.68, color: "#e879f9", wheelColor: "#111827" },
-      g4ultra: { id: "g4ultra", name: "Kukirin G4 Ultra", price: 12500, topSpeed: 68, accel: 1.8, color: "#34d399", wheelColor: "#111827" },
-      g4max: { id: "g4max", name: "Kukirin G4 Max", price: 14500, topSpeed: 72, accel: 1.9, color: "#10b981", wheelColor: "#111827" },
-      t3: { id: "t3", name: "Kukirin T3", price: 17000, topSpeed: 76, accel: 2.05, color: "#38bdf8", wheelColor: "#111827" },
-      t4: { id: "t4", name: "Kukirin T4", price: 21500, topSpeed: 80, accel: 2.15, color: "#f59e0b", wheelColor: "#111827" },
-      m4pro: { id: "m4pro", name: "Kukirin M4 Pro", price: 28000, topSpeed: 85, accel: 2.3, color: "#a78bfa", wheelColor: "#111827" },
-      m4max: { id: "m4max", name: "Kukirin M4 Max", price: 33000, topSpeed: 90, accel: 2.45, color: "#f87171", wheelColor: "#111827" }
+    const vehicles = {
+      free: { id: "free", name: "Kukirin S1 Pro", price: 0, topSpeed: 30, accel: 1.0, color: "#7dd3fc" },
+      s1max: { id: "s1max", name: "Kukirin S1 Max", price: 1200, topSpeed: 35, accel: 1.12, color: "#8b5cf6" },
+      s3pro: { id: "s3pro", name: "Kukirin S3 Pro", price: 2200, topSpeed: 38, accel: 1.2, color: "#f97316" },
+      g2: { id: "g2", name: "Kukirin G2", price: 2800, topSpeed: 42, accel: 1.28, color: "#22c55e" },
+      g2master: { id: "g2master", name: "Kukirin G2 Master", price: 3400, topSpeed: 46, accel: 1.33, color: "#a78bfa" },
+      g2pro: { id: "g2pro", name: "Kukirin G2 Pro", price: 4200, topSpeed: 48, accel: 1.38, color: "#60a5fa" },
+      g2max: { id: "g2max", name: "Kukirin G2 Max", price: 5100, topSpeed: 50, accel: 1.42, color: "#f472b6" },
+      g3: { id: "g3", name: "Kukirin G3", price: 6200, topSpeed: 55, accel: 1.48, color: "#2dd4bf" },
+      g3pro: { id: "g3pro", name: "Kukirin G3 Pro", price: 7800, topSpeed: 60, accel: 1.58, color: "#facc15" },
+      g4: { id: "g4", name: "Kukirin G4", price: 9800, topSpeed: 64, accel: 1.68, color: "#e879f9" },
+      g4ultra: { id: "g4ultra", name: "Kukirin G4 Ultra", price: 12500, topSpeed: 68, accel: 1.8, color: "#34d399" },
+      g4max: { id: "g4max", name: "Kukirin G4 Max", price: 14500, topSpeed: 72, accel: 1.9, color: "#10b981" },
+      t3: { id: "t3", name: "Kukirin T3", price: 17000, topSpeed: 76, accel: 2.05, color: "#38bdf8" },
+      t4: { id: "t4", name: "Kukirin T4", price: 21500, topSpeed: 80, accel: 2.15, color: "#f59e0b" },
+      m4pro: { id: "m4pro", name: "Kukirin M4 Pro", price: 28000, topSpeed: 85, accel: 2.3, color: "#a78bfa" },
+      m4max: { id: "m4max", name: "Kukirin M4 Max", price: 33000, topSpeed: 90, accel: 2.45, color: "#f87171" }
     };
 
     const state = {
@@ -318,44 +270,347 @@
       currentVehicleId: "free",
       lastMessage: "Miasto gotowe",
       player: {
-        x: 180,
-        y: 690,
-        radius: 16,
+        x: 0,
+        z: 0,
         vx: 0,
-        vy: 0,
+        vz: 0,
         angle: 0,
-        mode: "walk", // walk / scooter
         speed: 0,
-        boost: false
+        mode: "walk",
+        group: null
       },
-      police: [
-        { x: 600, y: 100, angle: 0, speed: 120, chasing: false, patrolX: 620, patrolY: 100, tint: "#f8fafc" },
-        { x: 1420, y: 980, angle: 0, speed: 110, chasing: false, patrolX: 1420, patrolY: 980, tint: "#e2e8f0" }
-      ],
+      police: [],
       arrested: false,
       arrestTimer: 0
     };
 
+    const keys = {};
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xbfd8ff);
+    scene.fog = new THREE.Fog(0xbfd8ff, 35, 150);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    const viewport = document.querySelector(".viewport");
+    viewport.appendChild(renderer.domElement);
+
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 2000);
+    camera.position.set(0, 10, 11);
+
+    const ambient = new THREE.HemisphereLight(0xcfe8ff, 0x2d3b2a, 1.2);
+    scene.add(ambient);
+
+    const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+    sun.position.set(25, 30, 10);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(1024, 1024);
+    scene.add(sun);
+
+    // world size
+    const WORLD = { width: 120, depth: 120 };
+
     function setMessage(text) {
       state.lastMessage = text;
-      messageBox.textContent = text;
-    }
-
-    function getCurrentVehicle() {
-      return allVehicles[state.currentVehicleId];
+      msgEl.textContent = text;
+      statusEl.textContent = text;
     }
 
     function updateHud() {
       moneyEl.textContent = state.money + " zł";
-      currentVehicleEl.textContent = allVehicles[state.currentVehicleId].name;
+      currentVehicleEl.textContent = vehicles[state.currentVehicleId].name;
       modeEl.textContent = state.player.mode === "walk" ? "Pieszo" : "Hulajnoga";
-      speedEl.textContent = Math.round(state.player.speed) + " km/h";
+      speedEl.textContent = Math.round(state.player.speed * 1.75) + " km/h";
       statusEl.textContent = state.lastMessage;
+    }
+
+    function createLabelSprite(text, bg = "#0f172a", color = "#e2e8f0") {
+      const canvas = document.createElement("canvas");
+      canvas.width = 512;
+      canvas.height = 128;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = "rgba(255,255,255,0.22)";
+      ctx.lineWidth = 8;
+      ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+      ctx.fillStyle = color;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "bold 54px Arial";
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+      const tex = new THREE.CanvasTexture(canvas);
+      const sprite = new THREE.Sprite(
+        new THREE.SpriteMaterial({ map: tex, transparent: true })
+      );
+      sprite.scale.set(10, 2.5, 1);
+      return sprite;
+    }
+
+    function createRoadSegment(x, z, w, d) {
+      const road = new THREE.Mesh(
+        new THREE.BoxGeometry(w, 0.08, d),
+        new THREE.MeshStandardMaterial({ color: 0x2d3748, roughness: 0.9 })
+      );
+      road.position.set(x, 0.04, z);
+      road.receiveShadow = true;
+      scene.add(road);
+
+      const stripeMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, emissive: 0x222222 });
+      const stripeGeo = new THREE.BoxGeometry(1.8, 0.02, 0.3);
+
+      if (w > d) {
+        const count = Math.floor(w / 6);
+        for (let i = -count; i <= count; i++) {
+          const stripe = new THREE.Mesh(stripeGeo, stripeMat);
+          stripe.position.set(i * 4.5, 0.11, 0);
+          road.add(stripe);
+        }
+      } else {
+        const count = Math.floor(d / 6);
+        for (let i = -count; i <= count; i++) {
+          const stripe = new THREE.Mesh(stripeGeo, stripeMat);
+          stripe.position.set(0, 0.11, i * 4.5);
+          stripe.rotation.y = Math.PI / 2;
+          road.add(stripe);
+        }
+      }
+    }
+
+    function addBuilding(x, z, w, d, h, color = 0x334155) {
+      const building = new THREE.Mesh(
+        new THREE.BoxGeometry(w, h, d),
+        new THREE.MeshStandardMaterial({ color, roughness: 0.88 })
+      );
+      building.position.set(x, h / 2, z);
+      building.castShadow = true;
+      building.receiveShadow = true;
+      scene.add(building);
+
+      const windows = new THREE.Mesh(
+        new THREE.BoxGeometry(w * 0.82, h * 0.65, d * 0.82),
+        new THREE.MeshStandardMaterial({
+          color: 0x93c5fd,
+          emissive: 0x4f46e5,
+          emissiveIntensity: 0.15,
+          transparent: true,
+          opacity: 0.35
+        })
+      );
+      windows.position.set(0, h * 0.08, 0);
+      building.add(windows);
+    }
+
+    function addSign(x, z, text) {
+      const sign = new THREE.Group();
+      const pole = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.08, 0.08, 2.6, 12),
+        new THREE.MeshStandardMaterial({ color: 0xf8fafc })
+      );
+      pole.position.y = 1.3;
+      sign.add(pole);
+
+      const board = new THREE.Mesh(
+        new THREE.BoxGeometry(1.8, 1.05, 0.12),
+        new THREE.MeshStandardMaterial({ color: 0xfef3c7, emissive: 0x444444, emissiveIntensity: 0.06 })
+      );
+      board.position.set(0, 2.5, 0);
+      sign.add(board);
+
+      const label = createLabelSprite(text, "#111827", "#f8fafc");
+      label.position.set(0, 2.5, 0.15);
+      label.scale.set(2.4, 0.7, 1);
+      sign.add(label);
+
+      sign.position.set(x, 0, z);
+      scene.add(sign);
+    }
+
+    function buildCity() {
+      // ground
+      const ground = new THREE.Mesh(
+        new THREE.BoxGeometry(WORLD.width, 0.8, WORLD.depth),
+        new THREE.MeshStandardMaterial({ color: 0x7cb342, roughness: 1 })
+      );
+      ground.position.set(0, -0.4, 0);
+      ground.receiveShadow = true;
+      scene.add(ground);
+
+      // roads
+      createRoadSegment(0, 0, 118, 20);
+      createRoadSegment(0, 28, 118, 20);
+      createRoadSegment(0, -28, 118, 20);
+
+      createRoadSegment(-28, 0, 20, 118);
+      createRoadSegment(28, 0, 20, 118);
+      createRoadSegment(-12, 30, 18, 60);
+      createRoadSegment(20, -35, 24, 64);
+
+      // blocks
+      const blockConfig = [
+        [-42, -42, 12, 12, 10, 0x334155],
+        [-42, 18, 12, 10, 14, 0x2d3748],
+        [-42, 42, 18, 12, 18, 0x374151],
+        [18, -42, 12, 12, 16, 0x475569],
+        [18, 18, 12, 12, 12, 0x475569],
+        [42, -14, 12, 12, 14, 0x334155],
+        [42, 34, 16, 14, 16, 0x4b5563],
+        [-18, 52, 16, 10, 14, 0x374151],
+        [-18, -52, 14, 12, 15, 0x334155],
+        [0, -52, 16, 12, 14, 0x475569]
+      ];
+
+      blockConfig.forEach(([x, z, w, d, h, color]) => addBuilding(x, z, w, d, h, color));
+
+      // park
+      const park = new THREE.Mesh(
+        new THREE.BoxGeometry(18, 0.2, 16),
+        new THREE.MeshStandardMaterial({ color: 0x4ade80, roughness: 1 })
+      );
+      park.position.set(-18, 0.15, -18);
+      scene.add(park);
+
+      // signs
+      addSign(0, -16, "30");
+      addSign(26, 14, "STOP");
+      addSign(0, 46, "Kraków");
+      addSign(-26, -42, "Rondo");
+      addSign(-44, 0, "20");
+    }
+
+    function createScooter(color) {
+      const group = new THREE.Group();
+
+      const deckMaterial = new THREE.MeshStandardMaterial({ color: 0x111827, metalness: 0.4, roughness: 0.7 });
+      const bodyMaterial = new THREE.MeshStandardMaterial({ color, metalness: 0.55, roughness: 0.38 });
+
+      const base = new THREE.Mesh(new THREE.BoxGeometry(2.7, 0.4, 1.2), bodyMaterial);
+      base.position.y = 0.7;
+      group.add(base);
+
+      const deck = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.18, 1.0), deckMaterial);
+      deck.position.y = 0.42;
+      group.add(deck);
+
+      const front = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.55, 0.8), bodyMaterial);
+      front.position.set(1.1, 0.9, 0);
+      group.add(front);
+
+      const handle = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.8, 0.12), new THREE.MeshStandardMaterial({ color: 0xe5e7eb }));
+      handle.position.set(1.5, 1.35, 0);
+      group.add(handle);
+
+      const wheelGeo = new THREE.CylinderGeometry(0.38, 0.38, 0.25, 20);
+      const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.9 });
+
+      const wheelPositions = [
+        [-0.9, 0.38, 0.72], [0.9, 0.38, 0.72],
+        [-0.9, 0.38, -0.72], [0.9, 0.38, -0.72]
+      ];
+
+      wheelPositions.forEach(([x, y, z]) => {
+        const wheel = new THREE.Mesh(wheelGeo, wheelMat);
+        wheel.rotation.z = Math.PI / 2;
+        wheel.position.set(x, y, z);
+        group.add(wheel);
+      });
+
+      const headLight = new THREE.Mesh(
+        new THREE.BoxGeometry(0.2, 0.15, 0.4),
+        new THREE.MeshStandardMaterial({ color: 0xfef3c7, emissive: 0xfff6b2, emissiveIntensity: 0.8 })
+      );
+      headLight.position.set(1.8, 0.92, 0);
+      group.add(headLight);
+
+      group.traverse((obj) => {
+        if (obj.isMesh) {
+          obj.castShadow = true;
+          obj.receiveShadow = true;
+        }
+      });
+
+      return group;
+    }
+
+    function getCurrentVehicle() {
+      return vehicles[state.currentVehicleId];
+    }
+
+    function makePolice() {
+      const group = new THREE.Group();
+
+      const body = new THREE.Mesh(
+        new THREE.BoxGeometry(1.8, 0.8, 1.1),
+        new THREE.MeshStandardMaterial({ color: 0xf8fafc, metalness: 0.5, roughness: 0.6 })
+      );
+      body.position.y = 0.7;
+      group.add(body);
+
+      const roof = new THREE.Mesh(
+        new THREE.BoxGeometry(1.1, 0.4, 0.9),
+        new THREE.MeshStandardMaterial({ color: 0x1f2937, metalness: 0.5 })
+      );
+      roof.position.y = 1.3;
+      group.add(roof);
+
+      const lightMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        emissive: 0x60a5fa,
+        emissiveIntensity: 0.9
+      });
+
+      const blue = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.18, 0.18), lightMat);
+      blue.position.set(-0.3, 1.32, 0.5);
+      group.add(blue);
+
+      const red = new THREE.Mesh(
+        new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xef4444, emissiveIntensity: 0.9 }),
+        new THREE.BoxGeometry(0.28, 0.18, 0.18)
+      );
+      red.position.set(0.3, 1.32, 0.5);
+      group.add(red);
+
+      const wheelGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.2, 16);
+      const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111827 });
+
+      [-0.8, 0.8].forEach((x) => {
+        [-0.55, 0.55].forEach((z) => {
+          const wheel = new THREE.Mesh(wheelGeo, wheelMat);
+          wheel.rotation.z = Math.PI / 2;
+          wheel.position.set(x, 0.35, z);
+          group.add(wheel);
+        });
+      });
+
+      return group;
+    }
+
+    function spawnPolice() {
+      const positions = [
+        { x: -18, z: -45, color: 0x60a5fa },
+        { x: 38, z: 44, color: 0x38bdf8 }
+      ];
+
+      positions.forEach((p) => {
+        const policeGroup = makePolice();
+        policeGroup.position.set(p.x, 0, p.z);
+        scene.add(policeGroup);
+        state.police.push({
+          x: p.x,
+          z: p.z,
+          group: policeGroup,
+          angle: 0,
+          chasing: false,
+          speed: 18
+        });
+      });
     }
 
     function renderShop() {
       shopEl.innerHTML = "";
-      Object.values(allVehicles).forEach(vehicle => {
+      Object.values(vehicles).forEach((vehicle) => {
         const item = document.createElement("div");
         item.className = "vehicle-item";
 
@@ -377,7 +632,7 @@
 
         const btn = document.createElement("button");
         btn.textContent = state.owned.includes(vehicle.id) ? "UŻYJ" : "KUP";
-        btn.className = state.owned.includes(vehicle.id) ? "secondary" : "";
+        if (state.owned.includes(vehicle.id)) btn.classList.add("secondary");
 
         btn.onclick = () => {
           if (state.owned.includes(vehicle.id)) {
@@ -408,33 +663,27 @@
 
     function renderGarage() {
       garageEl.innerHTML = "";
-      state.owned.forEach(vehicleId => {
-        const vehicle = allVehicles[vehicleId];
+      state.owned.forEach((vehicleId) => {
+        const v = vehicles[vehicleId];
         const item = document.createElement("div");
         item.className = "vehicle-item";
 
         const left = document.createElement("div");
         left.innerHTML = `
-          <div class="vehicle-name">${vehicle.name}</div>
-          <div class="vehicle-meta">${vehicle.topSpeed} km/h</div>
+          <div class="vehicle-name">${v.name}</div>
+          <div class="vehicle-meta">${v.topSpeed} km/h</div>
         `;
 
         const right = document.createElement("div");
         const btn = document.createElement("button");
-        btn.className = "secondary";
-
-        if (vehicleId === state.currentVehicleId && state.player.mode === "scooter") {
-          btn.textContent = "AKTYWNA";
-          btn.disabled = true;
-          btn.style.opacity = "0.8";
-        } else {
-          btn.textContent = "UŻYJ";
-        }
+        btn.classList.add("secondary");
+        btn.textContent = state.currentVehicleId === vehicleId && state.player.mode === "scooter" ? "AKTYWNA" : "UŻYJ";
+        btn.disabled = state.currentVehicleId === vehicleId && state.player.mode === "scooter";
 
         btn.onclick = () => {
           state.currentVehicleId = vehicleId;
           state.player.mode = "scooter";
-          setMessage("Aktywowano: " + vehicle.name);
+          setMessage("Aktywowano: " + v.name);
           renderShop();
           renderGarage();
           updateHud();
@@ -448,121 +697,125 @@
 
     function toggleMode() {
       if (state.player.mode === "walk") {
-        if (state.currentVehicleId === "free" || state.owned.includes(state.currentVehicleId)) {
-          state.player.mode = "scooter";
-          setMessage("Wsiadłeś na " + allVehicles[state.currentVehicleId].name);
-        } else {
-          setMessage("Brak hulajnogi!");
-        }
+        state.player.mode = "scooter";
+        setMessage("Wsiadłeś na " + getCurrentVehicle().name);
       } else {
         state.player.mode = "walk";
         setMessage("Wysiadłeś z hulajnogi");
       }
-      updateHud();
       renderGarage();
+      updateHud();
     }
+
+    function resizeRenderer() {
+      const width = viewport.clientWidth;
+      const height = viewport.clientHeight;
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    }
+
+    window.addEventListener("resize", resizeRenderer);
 
     function clamp(value, min, max) {
       return Math.min(Math.max(value, min), max);
     }
 
-    function isPointInRoad(x, y) {
-      for (const road of roads) {
-        if (x > road.x && x < road.x + road.w && y > road.y && y < road.y + road.h) return true;
-      }
-      return false;
-    }
-
     function handleInput(dt) {
-      const player = state.player;
+      let x = 0, z = 0;
+      if (keys["KeyW"] || keys["ArrowUp"]) z -= 1;
+      if (keys["KeyS"] || keys["ArrowDown"]) z += 1;
+      if (keys["KeyA"] || keys["ArrowLeft"]) x -= 1;
+      if (keys["KeyD"] || keys["ArrowRight"]) x += 1;
 
-      let dx = 0;
-      let dy = 0;
-
-      if (keys["KeyW"] || keys["ArrowUp"]) dy -= 1;
-      if (keys["KeyS"] || keys["ArrowDown"]) dy += 1;
-      if (keys["KeyA"] || keys["ArrowLeft"]) dx -= 1;
-      if (keys["KeyD"] || keys["ArrowRight"]) dx += 1;
-
-      const inputLen = Math.hypot(dx, dy) || 1;
-      dx /= inputLen;
-      dy /= inputLen;
-
-      let moveSpeed = player.mode === "walk" ? 150 : allVehicles[state.currentVehicleId].topSpeed * 5.2;
-      const boostFactor = (keys["ShiftLeft"] || keys["ShiftRight"]) && player.mode === "scooter" ? 1.2 : 1;
-
-      const currentVehicle = allVehicles[state.currentVehicleId];
-      const maxSpeed = currentVehicle.topSpeed * 5.2 * boostFactor;
-
-      if (dx !== 0 || dy !== 0) {
-        player.angle = Math.atan2(dy, dx);
-        const nextX = player.x + dx * maxSpeed * dt;
-        const nextY = player.y + dy * maxSpeed * dt;
-
-        // granice mapy
-        player.x = clamp(nextX, 18, WORLD.w - 18);
-        player.y = clamp(nextY, 18, WORLD.h - 18);
-
-        player.speed = Math.min(maxSpeed, Math.hypot(dx * maxSpeed, dy * maxSpeed));
-      } else {
-        player.speed *= 0.86;
-        if (Math.abs(player.speed) < 1) player.speed = 0;
+      const len = Math.hypot(x, z);
+      if (len > 0) {
+        x /= len;
+        z /= len;
       }
+
+      const vehicle = getCurrentVehicle();
+      const walkingSpeed = 8.5;
+      const boost = (keys["ShiftLeft"] || keys["ShiftRight"]) && state.player.mode === "scooter" ? 1.25 : 1;
+      const maxSpeed = state.player.mode === "walk" ? walkingSpeed : vehicle.topSpeed * 0.92 * boost;
+      const accel = state.player.mode === "walk" ? 16 : vehicle.accel * 9;
+
+      if (len > 0) {
+        const targetVx = x * maxSpeed;
+        const targetVz = z * maxSpeed;
+
+        state.player.vx = THREE.MathUtils.lerp(state.player.vx, targetVx, accel * dt * 0.12);
+        state.player.vz = THREE.MathUtils.lerp(state.player.vz, targetVz, accel * dt * 0.12);
+
+        state.player.angle = Math.atan2(state.player.vz, state.player.vx);
+        state.player.speed = Math.hypot(state.player.vx, state.player.vz);
+      } else {
+        state.player.vx *= 0.76;
+        state.player.vz *= 0.76;
+        state.player.speed *= 0.8;
+        if (Math.abs(state.player.vx) < 0.05) state.player.vx = 0;
+        if (Math.abs(state.player.vz) < 0.05) state.player.vz = 0;
+      }
+
+      state.player.x += state.player.vx * dt;
+      state.player.z += state.player.vz * dt;
+
+      state.player.x = clamp(state.player.x, -52, 52);
+      state.player.z = clamp(state.player.z, -52, 52);
+
+      state.player.group.position.set(state.player.x, 0.4, state.player.z);
+      state.player.group.rotation.y = -state.player.angle + Math.PI / 2;
     }
 
     function updatePolice(dt) {
       const player = state.player;
-      for (const cop of state.police) {
-        const dist = Math.hypot(player.x - cop.x, player.y - cop.y);
 
-        const playerFastEnough = player.speed > 18 && player.mode === "scooter";
-        if (playerFastEnough && dist < 300) {
+      state.police.forEach((cop) => {
+        const dist = Math.hypot(player.x - cop.x, player.z - cop.z);
+
+        if (dist < 22 && player.speed > 6) {
           cop.chasing = true;
           setMessage("Policja: Zatrzymaj się!");
-        } else if (dist > 420) {
+        } else if (dist > 30) {
           cop.chasing = false;
         }
 
         if (cop.chasing) {
           const dx = player.x - cop.x;
-          const dy = player.y - cop.y;
-          const ang = Math.atan2(dy, dx);
-          const step = cop.speed * dt;
+          const dz = player.z - cop.z;
+          const ang = Math.atan2(dz, dx);
+          const step = 9.5 * dt;
 
-          cop.x += Math.cos(ang) * step;
-          cop.y += Math.sin(ang) * step;
+          cop.x += Math.cos(ang) * step * 12;
+          cop.z += Math.sin(ang) * step * 12;
+          cop.group.rotation.y = -ang + Math.PI / 2;
 
-          if (dist < 28) {
-            state.arrested = true;
-            state.arrestTimer = 2.5;
+          cop.group.position.set(cop.x, 0.2, cop.z);
+
+          if (dist < 2.3) {
             state.money = Math.max(0, state.money - 150);
-            state.player.x = 180;
-            state.player.y = 690;
+            state.player.x = 0;
+            state.player.z = 0;
+            state.player.vx = 0;
+            state.player.vz = 0;
             state.player.mode = "walk";
             state.player.speed = 0;
+            state.arrested = true;
+            state.arrestTimer = 2.4;
             setMessage("Aresztowanie! Strata 150 zł.");
           }
         } else {
-          // patrolowanie
-          const patrolDx = Math.cos(cop.angle) * 90;
-          const patrolDy = Math.sin(cop.angle) * 90;
-
-          if (Math.abs(cop.x - cop.patrolX) > 120 || Math.abs(cop.y - cop.patrolY) > 120) {
-            cop.angle = Math.atan2(cop.patrolY - cop.y, cop.patrolX - cop.x);
+          // patrol
+          cop.group.rotation.y += dt * 0.8;
+          cop.group.position.x += Math.cos(cop.group.rotation.y) * 0.1;
+          cop.group.position.z += Math.sin(cop.group.rotation.y) * 0.1;
+          if (Math.abs(cop.group.position.x) > 48 || Math.abs(cop.group.position.z) > 48) {
+            cop.group.rotation.y += Math.PI;
           }
-
-          const px = Math.cos(cop.angle) * cop.speed * dt;
-          const py = Math.sin(cop.angle) * cop.speed * dt;
-
-          cop.x += px;
-          cop.y += py;
-
-          // odwracanie po granicach
-          if (cop.x < 100 || cop.x > WORLD.w - 100 || cop.y < 100 || cop.y > WORLD.h - 100) {
-            cop.angle += Math.PI * 0.8;
-          }
+          cop.x = cop.group.position.x;
+          cop.z = cop.group.position.z;
         }
-      }
+      });
 
       if (state.arrested) {
         state.arrestTimer -= dt;
@@ -573,184 +826,63 @@
       }
     }
 
-    function drawRoads() {
-      context.fillStyle = "#1e293b";
-      roads.forEach(road => {
-        context.fillRect(road.x, road.y, road.w, road.h);
-      });
+    function updateCamera() {
+      const offset = new THREE.Vector3(
+        Math.cos(state.player.angle) * -9,
+        7.5,
+        Math.sin(state.player.angle) * -9
+      );
 
-      // linie na drogach
-      context.strokeStyle = "rgba(250, 250, 250, 0.18)";
-      context.lineWidth = 2;
-      roads.forEach(road => {
-        if (road.w > road.h) {
-          const y = road.y + road.h / 2;
-          context.beginPath();
-          context.moveTo(road.x, y);
-          context.lineTo(road.x + road.w, y);
-          context.setLineDash([16, 18]);
-          context.stroke();
-        } else {
-          const x = road.x + road.w / 2;
-          context.beginPath();
-          context.moveTo(x, road.y);
-          context.lineTo(x, road.y + road.h);
-          context.setLineDash([16, 18]);
-          context.stroke();
-        }
-      });
-      context.setLineDash([]);
-    }
+      const targetCameraPos = new THREE.Vector3(
+        state.player.x + offset.x,
+        7.5,
+        state.player.z + offset.z
+      );
 
-    function drawBuildings() {
-      buildings.forEach(b => {
-        context.fillStyle = "#334155";
-        context.fillRect(b.x, b.y, b.w, b.h);
-
-        context.fillStyle = "rgba(148,163,184,0.14)";
-        for (let x = b.x + 12; x < b.x + b.w - 8; x += 22) {
-          for (let y = b.y + 12; y < b.y + b.h - 8; y += 22) {
-            context.fillRect(x, y, 10, 10);
-          }
-        }
-      });
-    }
-
-    function drawSigns() {
-      signs.forEach(sign => {
-        context.fillStyle = sign.color;
-        context.font = "bold 20px Arial";
-        context.fillText(sign.text, sign.x, sign.y);
-      });
-    }
-
-    function drawPlayer() {
-      const p = state.player;
-      if (p.mode === "walk") {
-        context.fillStyle = "#f8fafc";
-        context.beginPath();
-        context.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        context.fill();
-
-        context.strokeStyle = "#38bdf8";
-        context.lineWidth = 2;
-        context.beginPath();
-        context.moveTo(p.x, p.y);
-        context.lineTo(p.x + Math.cos(p.angle) * 22, p.y + Math.sin(p.angle) * 22);
-        context.stroke();
-      } else {
-        const v = allVehicles[state.currentVehicleId];
-        const bodyLength = 38;
-        const bodyWidth = 18;
-
-        context.save();
-        context.translate(p.x, p.y);
-        context.rotate(p.angle);
-
-        // kierownica / rama
-        context.fillStyle = v.color;
-        context.fillRect(-bodyLength / 2, -bodyWidth / 2, bodyLength, bodyWidth);
-
-        // kierownica
-        context.fillStyle = "#e5e7eb";
-        context.fillRect(-bodyLength / 2 + 8, -bodyWidth / 2 - 8, 12, 6);
-
-        // koła
-        context.fillStyle = v.wheelColor;
-        context.fillRect(-bodyLength / 2 + 4, -bodyWidth / 2 - 10, 12, 8);
-        context.fillRect(bodyLength / 2 - 16, -bodyWidth / 2 - 10, 12, 8);
-        context.fillRect(-bodyLength / 2 + 4, bodyWidth / 2 + 2, 12, 8);
-        context.fillRect(bodyLength / 2 - 16, bodyWidth / 2 + 2, 12, 8);
-
-        context.restore();
-      }
-    }
-
-    function drawPolice() {
-      for (const cop of state.police) {
-        context.save();
-        context.translate(cop.x, cop.y);
-        context.rotate(Math.atan2(state.player.y - cop.y, state.player.x - cop.x));
-
-        context.fillStyle = "#f8fafc";
-        context.fillRect(-12, -10, 24, 20);
-
-        context.fillStyle = "#1f2937";
-        context.fillRect(-6, -8, 12, 12);
-
-        context.fillStyle = "#ef4444";
-        context.fillRect(-8, 12, 16, 5);
-
-        context.restore();
-
-        // glow / tło
-        context.fillStyle = cop.chasing ? "rgba(248, 113, 113, 0.25)" : "rgba(56, 189, 248, 0.10)";
-        context.beginPath();
-        context.arc(cop.x, cop.y, cop.chasing ? 70 : 40, 0, Math.PI * 2);
-        context.fill();
-      }
-    }
-
-    function drawMinimapHints() {
-      context.fillStyle = "#f8fafc";
-      context.font = "12px Arial";
-      context.fillText("Kraków — Centrum", 40, 40);
-      context.fillText("ul. Jana Pawła II", 1200, 180);
-      context.fillText("Rondo Grzegórzeckie", 1300, 930);
-    }
-
-    function drawScene() {
-      context.clearRect(0, 0, canvas.width, canvas.height);
-
-      // tło mapy
-      context.fillStyle = "#0f172a";
-      context.fillRect(0, 0, canvas.width, canvas.height);
-
-      drawBuildings();
-      drawRoads();
-      drawSigns();
-      drawPolice();
-      drawPlayer();
-      drawMinimapHints();
-    }
-
-    function resizeCanvas() {
-      const parent = canvas.parentElement;
-      const rect = parent.getBoundingClientRect();
-      canvas.width = Math.max(1100, rect.width);
-      canvas.height = Math.max(700, rect.height);
+      camera.position.lerp(targetCameraPos, 0.08);
+      camera.lookAt(state.player.x, 1.2, state.player.z);
     }
 
     function animate() {
-      const now = performance.now();
-      const dt = 1 / 60; // prosty game loop, stabilny
+      const dt = 1 / 60;
       handleInput(dt);
       updatePolice(dt);
-      drawScene();
+      updateCamera();
+      renderer.render(scene, camera);
       updateHud();
       requestAnimationFrame(animate);
     }
 
-    window.addEventListener("keydown", (e) => {
-      keys[e.code] = true;
+    // game start
+    buildCity();
+    spawnPolice();
 
-      if (e.code === "KeyE") {
-        toggleMode();
-      }
-    });
+    const playerVehicle = createScooter(vehicles.free.color);
+    scene.add(playerVehicle);
 
-    window.addEventListener("keyup", (e) => {
-      keys[e.code] = false;
-    });
+    state.player.group = playerVehicle;
+    state.player.x = 0;
+    state.player.z = 0;
+    state.player.group.position.set(0, 0.4, 0);
 
-    window.addEventListener("resize", resizeCanvas);
-
-    // start
-    resizeCanvas();
     renderShop();
     renderGarage();
     updateHud();
     setMessage("Demo testowa — Kraków");
+
+    function onKeyDown(event) {
+      keys[event.code] = true;
+      if (event.code === "KeyE") toggleMode();
+    }
+
+    function onKeyUp(event) {
+      keys[event.code] = false;
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
+
+    resizeRenderer();
     requestAnimationFrame(animate);
   </script>
 </body>
