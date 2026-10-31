@@ -6,185 +6,81 @@
   <title>Kukirin Life Demo</title>
   <style>
     :root{
-      --bg:#0a1220;
-      --panel:rgba(15,23,42,0.92);
-      --panel-2:rgba(30,41,59,0.9);
-      --line:rgba(148,163,184,0.22);
-      --text:#e2e8f0;
-      --muted:#a5b4cf;
-      --cyan:#38bdf8;
-      --yellow:#facc15;
-      --green:#4ade80;
-      --red:#f87171;
+      --bg:#0a1220; --panel:rgba(15,23,42,0.92); --panel-2:rgba(30,41,59,0.9);
+      --line:rgba(148,163,184,0.22); --text:#e2e8f0; --muted:#a5b4cf;
+      --cyan:#38bdf8; --yellow:#facc15; --green:#4ade80; --red:#f87171;
     }
-
     *{box-sizing:border-box}
     html,body{
-      margin:0;
-      width:100%;
-      height:100%;
-      background:#020817;
-      color:var(--text);
-      font-family:Arial, Helvetica, sans-serif;
-      overflow:hidden;
+      margin:0; width:100%; height:100%;
+      background:#020817; color:var(--text);
+      font-family:Arial, Helvetica, sans-serif; overflow:hidden;
     }
     body{
-      display:flex;
-      gap:14px;
-      padding:14px;
+      display:flex; gap:14px; padding:14px;
     }
-
     .sidebar{
-      width:350px;
-      min-width:350px;
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:16px;
+      width:350px; min-width:350px; background:var(--panel);
+      border:1px solid var(--line); border-radius:16px;
       box-shadow:0 10px 25px rgba(0,0,0,.28);
-      padding:12px;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
+      padding:12px; display:flex; flex-direction:column; gap:12px;
     }
-
     .brand{
-      font-size:30px;
-      font-weight:900;
-      color:var(--yellow);
-      text-transform:uppercase;
-      letter-spacing:1px;
-      text-align:center;
-      margin-bottom:4px;
-      text-shadow:0 0 14px rgba(250,204,21,0.22);
+      text-align:center; font-size:30px; font-weight:900; color:var(--yellow);
+      text-transform:uppercase; letter-spacing:1px; text-shadow:0 0 14px rgba(250,204,21,0.22);
     }
-
     .status-box{
-      background:var(--panel-2);
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px 12px;
-      line-height:1.7;
-      font-size:14px;
+      background:var(--panel-2); border:1px solid var(--line); border-radius:12px;
+      padding:10px 12px; line-height:1.7; font-size:14px;
     }
-
     .panel-title{
-      font-size:15px;
-      font-weight:800;
-      color:var(--cyan);
-      letter-spacing:1px;
-      text-transform:uppercase;
-      margin:0 0 8px;
+      font-size:15px; font-weight:800; color:var(--cyan); letter-spacing:1px;
+      text-transform:uppercase; margin:0 0 8px;
     }
-
-    .shop, .garage{
-      background:var(--panel-2);
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      max-height:300px;
-      overflow-y:auto;
+    .shop,.garage{
+      background:var(--panel-2); border:1px solid var(--line); border-radius:12px;
+      padding:10px; display:flex; flex-direction:column; gap:8px;
+      max-height:300px; overflow-y:auto;
     }
-
     .vehicle-item{
-      display:flex;
-      justify-content:space-between;
-      gap:8px;
-      align-items:center;
-      border:1px solid var(--line);
-      border-radius:10px;
-      background:rgba(15,23,42,0.8);
+      display:flex; justify-content:space-between; gap:8px; align-items:center;
+      border:1px solid var(--line); border-radius:10px; background:rgba(15,23,42,0.8);
       padding:8px 10px;
     }
-
-    .vehicle-name{
-      font-weight:700;
-      font-size:13px;
-    }
-
-    .vehicle-meta{
-      color:var(--muted);
-      font-size:11px;
-      margin-top:3px;
-    }
-
-    .vehicle-price{
-      color:var(--yellow);
-      font-weight:700;
-      font-size:12px;
-      white-space:nowrap;
-    }
-
+    .vehicle-name{font-weight:700; font-size:13px}
+    .vehicle-meta{color:var(--muted); font-size:11px; margin-top:3px}
+    .vehicle-price{color:var(--yellow); font-weight:700; font-size:12px; white-space:nowrap}
     button{
-      background:linear-gradient(180deg, #38bdf8, #2563eb);
-      border:none;
-      color:white;
-      font-weight:700;
-      border-radius:8px;
-      padding:8px 10px;
-      cursor:pointer;
-      min-width:72px;
-      font-size:12px;
+      background:linear-gradient(180deg, #38bdf8, #2563eb); border:none; color:white;
+      font-weight:700; border-radius:8px; padding:8px 10px; cursor:pointer; min-width:72px; font-size:12px;
     }
     button:hover{filter:brightness(1.08)}
     button.secondary{background:linear-gradient(180deg, #4ade80, #16a34a)}
-    button:disabled{opacity:0.8;cursor:default}
-
     .viewport{
-      position:relative;
-      flex:1;
-      background:#000;
-      border:1px solid var(--line);
-      border-radius:18px;
-      overflow:hidden;
+      position:relative; flex:1; background:#000;
+      border:1px solid var(--line); border-radius:18px; overflow:hidden;
       box-shadow:0 10px 25px rgba(0,0,0,.32);
     }
-
-    canvas{
-      display:block;
-      width:100%;
-      height:100%;
-    }
-
+    canvas{display:block; width:100%; height:100%}
     .message{
-      position:absolute;
-      top:12px;
-      left:50%;
-      transform:translateX(-50%);
-      background:rgba(15,23,42,0.7);
-      border:1px solid var(--line);
-      border-radius:999px;
-      padding:8px 16px;
-      font-size:12px;
-      font-weight:700;
-      letter-spacing:.5px;
-      z-index:10;
+      position:absolute; top:12px; left:50%; transform:translateX(-50%);
+      background:rgba(15,23,42,0.7); border:1px solid var(--line);
+      border-radius:999px; padding:8px 16px; font-size:12px; font-weight:700; z-index:10;
     }
-
     .hint{
-      position:absolute;
-      left:12px;
-      bottom:12px;
-      background:rgba(2,6,23,0.72);
-      border:1px solid var(--line);
-      border-radius:10px;
-      padding:8px 10px;
-      font-size:12px;
-      z-index:10;
+      position:absolute; left:12px; bottom:12px; background:rgba(2,6,23,0.72);
+      border:1px solid var(--line); border-radius:10px; padding:8px 10px; font-size:12px; z-index:10;
     }
-
     @media (max-width:1080px){
       body{flex-direction:column}
-      .sidebar{width:100%;min-width:unset}
+      .sidebar{width:100%; min-width:unset}
       .viewport{min-height:60vh}
     }
   </style>
 </head>
 <body>
   <div class="sidebar">
-    <div class="brand">Kukirin Life</div>
+    <div class="brand">KUKIRIN LIFE</div>
 
     <div class="status-box">
       <div><strong>Budżet:</strong> <span id="money">500 zł</span></div>
@@ -210,9 +106,8 @@
     <div class="hint">W/A/S/D • Shift • E</div>
   </div>
 
-  <script type="module">
-    import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
-
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script>
     const moneyEl = document.getElementById("money");
     const currentVehicleEl = document.getElementById("currentVehicle");
     const modeEl = document.getElementById("mode");
@@ -246,17 +141,7 @@
       owned:["free"],
       currentVehicleId:"free",
       lastMessage:"Miasto gotowe",
-      player:{
-        x:0,
-        z:0,
-        vx:0,
-        vz:0,
-        angle:0,
-        speed:0,
-        mode:"walk",
-        group:null,
-        y:0.4
-      },
+      player:{ x:0, z:0, vx:0, vz:0, angle:0, speed:0, mode:"walk", group:null },
       police:[],
       arrested:false,
       arrestTimer:0
@@ -308,30 +193,21 @@
       const metalMat = new THREE.MeshStandardMaterial({ color:0xe5e7eb, metalness:0.8, roughness:0.4 });
 
       const main = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.38, 1.2), bodyMat);
-      main.position.y = 0.7;
-      group.add(main);
+      main.position.y = 0.7; group.add(main);
 
       const deck = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.2, 1.0), darkMat);
-      deck.position.y = 0.45;
-      group.add(deck);
+      deck.position.y = 0.45; group.add(deck);
 
       const stem = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.8, 0.12), metalMat);
-      stem.position.set(1.4, 1.2, 0);
-      group.add(stem);
+      stem.position.set(1.4, 1.2, 0); group.add(stem);
 
       const head = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.55, 0.8), bodyMat);
-      head.position.set(1.0, 0.95, 0);
-      group.add(head);
+      head.position.set(1.0, 0.95, 0); group.add(head);
 
-      const wheelGeo = new THREE.CylinderGeometry(0.38, 0.38, 0.25, 18);
+      const wheelGeo = new THREE.CylinderGeometry(0.38,0.38,0.25,18);
       const wheelMat = new THREE.MeshStandardMaterial({ color:0x111827, roughness:0.9 });
 
-      const wheels = [
-        [-0.9,0.38,0.72],[0.9,0.38,0.72],
-        [-0.9,0.38,-0.72],[0.9,0.38,-0.72]
-      ];
-
-      wheels.forEach(([x,y,z]) => {
+      [[-0.9,0.38,0.72],[0.9,0.38,0.72],[-0.9,0.38,-0.72],[0.9,0.38,-0.72]].forEach(([x,y,z]) => {
         const wheel = new THREE.Mesh(wheelGeo, wheelMat);
         wheel.rotation.z = Math.PI / 2;
         wheel.position.set(x,y,z);
@@ -342,42 +218,297 @@
         new THREE.BoxGeometry(0.18, 0.14, 0.4),
         new THREE.MeshStandardMaterial({ color:0xfef3c7, emissive:0xfff6b2, emissiveIntensity:0.9 })
       );
-      light.position.set(1.9, 0.92, 0);
-      group.add(light);
+      light.position.set(1.9, 0.92, 0); group.add(light);
 
-      group.traverse(obj => {
-        if (obj.isMesh) {
-          obj.castShadow = true;
-          obj.receiveShadow = true;
-        }
-      });
-
+      group.traverse(obj => { if(obj.isMesh){ obj.castShadow = true; obj.receiveShadow = true; } });
       return group;
     }
 
-    function createPolice() {
+    function createPolice(){
       const group = new THREE.Group();
-
       const bodyMat = new THREE.MeshStandardMaterial({ color:0xf8fafc, metalness:0.45, roughness:0.6 });
       const dark = new THREE.MeshStandardMaterial({ color:0x111827, roughness:0.8 });
       const lite = new THREE.MeshStandardMaterial({ color:0xffffff, emissive:0x60a5fa, emissiveIntensity:0.9 });
 
       const body = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.8, 1.0), bodyMat);
-      body.position.y = 0.7;
-      group.add(body);
+      body.position.y = 0.7; group.add(body);
 
       const roof = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.4, 0.8), dark);
-      roof.position.y = 1.25;
-      group.add(roof);
+      roof.position.y = 1.25; group.add(roof);
 
-      const blue = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.18, 0.18), lite);
-      blue.position.set(-0.3, 1.3, 0.52);
-      group.add(blue);
+      const blue = new THREE.Mesh(new THREE.BoxGeometry(0.25,0.18,0.18), lite);
+      blue.position.set(-0.3,1.3,0.52); group.add(blue);
 
       const redMat = new THREE.MeshStandardMaterial({ color:0xffffff, emissive:0xef4444, emissiveIntensity:0.9 });
-      const red = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.18, 0.18), redMat);
-      red.position.set(0.3, 1.3, 0.52);
-      group.add(red);
+      const red = new THREE.Mesh(new THREE.BoxGeometry(0.25,0.18,0.18), redMat);
+      red.position.set(0.3,1.3,0.52); group.add(red);
 
-      const wheelGeo = new THREE.CylinderGeometry(0.28,0.28,0.2,16);*
-
+      const wheelGeo = new THREE.CylinderGeometry(0.28,0.28,0.2,16);
+      const wheelMat = new THREE.MeshStandardMaterial({ color:0x111827 });
+      [-0.8,0.8].forEach(x => {
+        [-0.52,0.52].forEach(z => {
+          const wheel = new THREE.Mesh(wheelGeo, wheelMat);
+          wheel.rotation.z = Math.PI / 2;
+          wheel.position.set(x,0.34,z);
+          group.add(wheel);
+        });
+      });
+      return group;
+    }
+
+    function buildCity(){
+      const ground = new THREE.Mesh(
+        new THREE.BoxGeometry(120, 0.8, 120),
+        new THREE.MeshStandardMaterial({ color:0x6d9b4e, roughness:1 })
+      );
+      ground.position.y = -0.4; ground.receiveShadow = true; scene.add(ground);
+
+      const roads = [
+        {x:0,z:0,w:118,d:18},{x:0,z:28,w:118,d:18},{x:0,z:-28,w:118,d:18},
+        {x:-28,z:0,w:18,d:118},{x:28,z:0,w:18,d:118},{x:0,z:52,w:50,d:18},{x:-20,z:-48,w:18,d:40}
+      ];
+      roads.forEach(r => {
+        const road = new THREE.Mesh(new THREE.BoxGeometry(r.w,0.08,r.d), new THREE.MeshStandardMaterial({ color:0x2d3748, roughness:0.9 }));
+        road.position.set(r.x,0.04,r.z); road.receiveShadow = true; scene.add(road);
+        const stripeMat = new THREE.MeshStandardMaterial({ color:0xf8fafc, emissive:0x303030 });
+        if(r.w > r.d){
+          for(let i=-10;i<=10;i++){
+            const stripe = new THREE.Mesh(new THREE.BoxGeometry(3.2,0.02,0.25), stripeMat);
+            stripe.position.set(i*5.2,0.1,0); road.add(stripe);
+          }
+        } else {
+          for(let i=-10;i<=10;i++){
+            const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.25,0.02,3.2), stripeMat);
+            stripe.position.set(0,0.1,i*5.2); road.add(stripe);
+          }
+        }
+      });
+
+      const blocks = [
+        [-42,-42,12,12,11,0x334155],[-42,18,12,11,14,0x2d3748],[-42,42,18,12,17,0x374151],
+        [18,-42,12,12,15,0x475569],[18,18,12,12,12,0x475569],[42,-14,12,12,14,0x334155],
+        [42,34,16,14,16,0x4b5563],[-18,52,16,10,14,0x374151],[-18,-52,14,12,15,0x334155],[0,-52,16,12,14,0x475569]
+      ];
+      blocks.forEach(([x,z,w,d,h,color]) => {
+        const b = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), new THREE.MeshStandardMaterial({ color, roughness:0.9 }));
+        b.position.set(x,h/2,z); b.castShadow = true; b.receiveShadow = true; scene.add(b);
+      });
+
+      const park = new THREE.Mesh(new THREE.BoxGeometry(18,0.2,16), new THREE.MeshStandardMaterial({ color:0x4ade80, roughness:1 }));
+      park.position.set(-18,0.15,-18); scene.add(park);
+    }
+
+    function renderShop(){
+      shopEl.innerHTML = "";
+      Object.values(vehicles).forEach(vehicle => {
+        const item = document.createElement("div");
+        item.className = "vehicle-item";
+
+        const left = document.createElement("div");
+        left.innerHTML = '<div class="vehicle-name">' + vehicle.name + '</div><div class="vehicle-meta">' + vehicle.topSpeed + ' km/h • ' + vehicle.accel.toFixed(2) + 'x</div>';
+
+        const right = document.createElement("div");
+        right.style.display = "flex"; right.style.flexDirection = "column"; right.style.alignItems = "flex-end"; right.style.gap = "4px";
+
+        const price = document.createElement("div");
+        price.className = "vehicle-price";
+        price.textContent = vehicle.price === 0 ? "DARMO" : vehicle.price + " zł";
+
+        const btn = document.createElement("button");
+        btn.textContent = state.owned.includes(vehicle.id) ? "UŻYJ" : "KUP";
+        if(state.owned.includes(vehicle.id)) btn.classList.add("secondary");
+
+        btn.onclick = () => {
+          if(state.owned.includes(vehicle.id)){
+            state.currentVehicleId = vehicle.id; state.player.mode = "scooter"; setMessage("Wybrano: " + vehicle.name);
+          } else {
+            if(state.money >= vehicle.price){
+              state.money -= vehicle.price; state.owned.push(vehicle.id); state.currentVehicleId = vehicle.id; state.player.mode = "scooter"; setMessage("Kupiono: " + vehicle.name);
+            } else {
+              setMessage("Za mało pieniędzy!");
+            }
+          }
+          renderShop(); renderGarage(); updateHud();
+        };
+
+        right.append(price, btn); item.append(left, right); shopEl.appendChild(item);
+      });
+    }
+
+    function renderGarage(){
+      garageEl.innerHTML = "";
+      state.owned.forEach(vehicleId => {
+        const v = vehicles[vehicleId];
+        const item = document.createElement("div");
+        item.className = "vehicle-item";
+
+        const left = document.createElement("div");
+        left.innerHTML = '<div class="vehicle-name">' + v.name + '</div><div class="vehicle-meta">' + v.topSpeed + ' km/h</div>';
+
+        const right = document.createElement("div");
+        const btn = document.createElement("button");
+        btn.classList.add("secondary");
+        btn.textContent = (state.currentVehicleId === vehicleId && state.player.mode === "scooter") ? "AKTYWNA" : "UŻYJ";
+        btn.disabled = (state.currentVehicleId === vehicleId && state.player.mode === "scooter");
+
+        btn.onclick = () => {
+          state.currentVehicleId = vehicleId; state.player.mode = "scooter";
+          setMessage("Aktywowano: " + v.name);
+          renderShop(); renderGarage(); updateHud();
+        };
+
+        right.appendChild(btn); item.append(left, right); garageEl.appendChild(item);
+      });
+    }
+
+    function toggleMode(){
+      if(state.player.mode === "walk"){
+        state.player.mode = "scooter"; setMessage("Wsiadłeś na " + vehicles[state.currentVehicleId].name);
+      } else {
+        state.player.mode = "walk"; setMessage("Wysiadłeś z hulajnogi");
+      }
+      renderGarage(); updateHud();
+    }
+
+    function getCurrentVehicle(){ return vehicles[state.currentVehicleId]; }
+
+    function resizeRenderer(){
+      const w = viewport.clientWidth;
+      const h = viewport.clientHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+
+    function handleInput(dt){
+      let x = 0, z = 0;
+      if(keys["KeyW"] || keys["ArrowUp"]) z -= 1;
+      if(keys["KeyS"] || keys["ArrowDown"]) z += 1;
+      if(keys["KeyA"] || keys["ArrowLeft"]) x -= 1;
+      if(keys["KeyD"] || keys["ArrowRight"]) x += 1;
+
+      const len = Math.hypot(x, z);
+      if(len > 0){ x /= len; z /= len; }
+
+      const vehicle = getCurrentVehicle();
+      const walkingSpeed = 8.5;
+      const boost = (keys["ShiftLeft"] || keys["ShiftRight"]) && state.player.mode === "scooter" ? 1.25 : 1;
+      const maxSpeed = state.player.mode === "walk" ? walkingSpeed : vehicle.topSpeed * 0.9 * boost;
+      const accel = state.player.mode === "walk" ? 16 : vehicle.accel * 8;
+
+      if(len > 0){
+        const tx = x * maxSpeed;
+        const tz = z * maxSpeed;
+        state.player.vx = THREE.MathUtils.lerp(state.player.vx, tx, accel * dt * 0.12);
+        state.player.vz = THREE.MathUtils.lerp(state.player.vz, tz, accel * dt * 0.12);
+        state.player.angle = Math.atan2(state.player.vz, state.player.vx);
+        state.player.speed = Math.hypot(state.player.vx, state.player.vz);
+      } else {
+        state.player.vx *= 0.8;
+        state.player.vz *= 0.8;
+        state.player.speed *= 0.8;
+        if(Math.abs(state.player.vx) < 0.05) state.player.vx = 0;
+        if(Math.abs(state.player.vz) < 0.05) state.player.vz = 0;
+      }
+
+      state.player.x += state.player.vx * dt;
+      state.player.z += state.player.vz * dt;
+      state.player.x = THREE.MathUtils.clamp(state.player.x, -52, 52);
+      state.player.z = THREE.MathUtils.clamp(state.player.z, -52, 52);
+
+      state.player.group.position.set(state.player.x, 0.4, state.player.z);
+      state.player.group.rotation.y = -state.player.angle + Math.PI / 2;
+    }
+
+    function updatePolice(dt){
+      state.police.forEach(cop => {
+        const dist = Math.hypot(state.player.x - cop.x, state.player.z - cop.z);
+
+        if(dist < 18 && state.player.speed > 6){
+          cop.chasing = true; setMessage("Policja: Zatrzymaj się!");
+        } else if(dist > 30){
+          cop.chasing = false;
+        }
+
+        if(cop.chasing){
+          const angle = Math.atan2(state.player.z - cop.z, state.player.x - cop.x);
+          cop.x += Math.cos(angle) * 9.5 * dt * 10;
+          cop.z += Math.sin(angle) * 9.5 * dt * 10;
+          cop.group.position.set(cop.x, 0.2, cop.z);
+          cop.group.rotation.y = -angle + Math.PI / 2;
+
+          if(dist < 2.2){
+            state.money = Math.max(0, state.money - 150);
+            state.player.x = 0; state.player.z = 0; state.player.vx = 0; state.player.vz = 0;
+            state.player.mode = "walk"; state.player.speed = 0;
+            state.arrested = true; state.arrestTimer = 2.6;
+            setMessage("Aresztowanie! Strata 150 zł.");
+          }
+        } else {
+          cop.group.rotation.y += dt * 0.8;
+          cop.group.position.x += Math.cos(cop.group.rotation.y) * 0.12;
+          cop.group.position.z += Math.sin(cop.group.rotation.y) * 0.12;
+          if(Math.abs(cop.group.position.x) > 48 || Math.abs(cop.group.position.z) > 48){
+            cop.group.rotation.y += Math.PI;
+          }
+          cop.x = cop.group.position.x; cop.z = cop.group.position.z;
+        }
+      });
+
+      if(state.arrested){
+        state.arrestTimer -= dt;
+        if(state.arrestTimer <= 0){
+          state.arrested = false; setMessage("Możesz wrócić do jazdy.");
+        }
+      }
+    }
+
+    function updateCamera(){
+      const offset = new THREE.Vector3(Math.cos(state.player.angle)*-9, 7, Math.sin(state.player.angle)*-9);
+      const target = new THREE.Vector3(state.player.x + offset.x, 7, state.player.z + offset.z);
+      camera.position.lerp(target, 0.08);
+      camera.lookAt(state.player.x, 1.2, state.player.z);
+    }
+
+    function addPolice(){
+      const positions = [{x:-18,z:-42},{x:35,z:38}];
+      positions.forEach(p => {
+        const cop = createPolice();
+        cop.position.set(p.x,0,p.z); scene.add(cop);
+        state.police.push({ x:p.x, z:p.z, group:cop, chasing:false });
+      });
+    }
+
+    function animate(){
+      handleInput(1/60);
+      updatePolice(1/60);
+      updateCamera();
+      renderer.render(scene, camera);
+      updateHud();
+      requestAnimationFrame(animate);
+    }
+
+    function init(){
+      buildCity();
+      addPolice();
+
+      const player = createScooter(vehicles.free.color);
+      player.position.set(0,0.4,0);
+      scene.add(player);
+      state.player.group = player;
+
+      renderShop(); renderGarage(); updateHud();
+      setMessage("Demo testowa — Kraków");
+
+      resizeRenderer();
+      window.addEventListener("resize", resizeRenderer);
+
+      window.addEventListener("keydown", e => { keys[e.code] = true; if(e.code === "KeyE") toggleMode(); });
+      window.addEventListener("keyup", e => { keys[e.code] = false; });
+    }
+
+    init();
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
